@@ -1,4 +1,5 @@
 import React from 'react';
+import Swal from 'sweetalert2';
 
 const AddCoffee = () => {
 
@@ -6,6 +7,32 @@ const AddCoffee = () => {
         e.preventDefault()
 
         const form = e.target;
+        const formData = new FormData(form)
+        const newCoffee = Object.fromEntries(formData.entries())
+        console.log(newCoffee);
+
+
+        // Send data to the database
+        fetch('http://localhost:3000/coffees', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newCoffee)
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.insertedId) {
+                    console.log('Added successfully');
+                    Swal.fire({
+                        title: "Coffee added successfully",
+                        icon: "success",
+                        draggable: true
+                    });
+
+                    // form.reset()
+                }
+            })
     }
 
     return (
@@ -16,7 +43,7 @@ const AddCoffee = () => {
             </div>
 
 
-            <form>
+            <form onSubmit={handleAddCoffee}>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 
                     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
@@ -24,8 +51,8 @@ const AddCoffee = () => {
                         <input type="text" name='name' className="input w-full" placeholder="Enter Coffee Name" />
                     </fieldset>
                     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
-                        <label className="label">Chef</label>
-                        <input type="text" name='chef' className="input w-full" placeholder="Enter Coffee Chef" />
+                        <label className="label">Quantity</label>
+                        <input type="number" name='quantity' className="input w-full" placeholder="Enter Quantity" />
                     </fieldset>
                     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
                         <label className="label">Supplier</label>
@@ -36,8 +63,8 @@ const AddCoffee = () => {
                         <input type="text" name='taste' className="input w-full" placeholder="Enter Coffee Taste" />
                     </fieldset>
                     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
-                        <label className="label">Category</label>
-                        <input type="text" name='category' className="input w-full" placeholder="Enter Coffee Category" />
+                        <label className="label">Price</label>
+                        <input type="number" name='price' className="input w-full" placeholder="Enter Price" />
                     </fieldset>
                     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
                         <label className="label">Details</label>
